@@ -14,7 +14,7 @@ url_glissade = 'http://www2.ville.montreal.qc.ca/services_citoyens/' \
 
 
 def importer_donnees():
-    connection = sqlite3.connect('db/db.sqlite')
+    connection = sqlite3.connect('db/sqlite.db')
 
     # supprimer la base de donnees
     connection.execute("delete from installation_eau")
