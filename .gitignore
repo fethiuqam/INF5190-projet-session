@@ -1,4 +1,4 @@
 .idea
 __pycache__
 db/*.sqlite
-flask-env/
+env_flask/
