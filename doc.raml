@@ -1,0 +1,36 @@
+#%RAML 1.0
+title: Documentation de l'API REST des installations de la ville de Montréal
+mediaType: application/json
+types:
+  Installation:
+    properties:
+      nom:
+        type: string
+        required: true
+      type:
+        type: string
+        required: true
+
+#  ExistingPerson:
+#    properties:
+#      id:
+#        type: string
+#        required: true
+#      lastname:
+#        type: string
+#        required: true
+#      firstname:
+#        type: string
+#        required: true
+#      age:
+#        type: number
+#        required: true
+/api:
+  /installations:
+    get:
+      description: extrait la liste des installations filtrée par le nom de l'arrondissement.
+      responses:
+        200:
+          body:
+            application/json:
+              type: Installation[]
