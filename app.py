@@ -1,7 +1,8 @@
 from flask import Flask
 from planification import demarrer_planification
 from models import *
-import datetime
+from import_donnees import importer_donnees
+
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///db/sqlite.db'
@@ -15,14 +16,7 @@ def documentation():
     return 'documentation'
 
 
-demarrer_planification()
-
 with app.app_context():
-    db.drop_all()
-    db.create_all()
-    gliss = Glissade(nom='nom glissade', arrondissement='arrondissemmmm',
-                     ouvert=True, deblaye=False, condition=None,
-                     mise_a_jour=datetime.datetime.now())
-    db.session.add(gliss)
-    db.session.commit()
+    importer_donnees()
+    demarrer_planification()
 

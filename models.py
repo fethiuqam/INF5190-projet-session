@@ -71,13 +71,13 @@ class Patinoire(Installation):
 
 class Piscine(Installation):
     id_uev = db.Column(db.Integer)
-    type_ = db.Column(db.String(30))
+    type_piscine = db.Column(db.String(30))
     adresse = db.Column(db.String(60))
     propriete = db.Column(db.String(20))
     gestion = db.Column(db.String(20))
     equipement = db.Column(db.String(20))
-    point_x = db.Column(db.Float)
-    point_y = db.Column(db.Float)
+    point_x = db.Column(db.String(20))
+    point_y = db.Column(db.String(20))
     longitude = db.Column(db.Float)
     latitude = db.Column(db.Float)
 
