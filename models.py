@@ -1,7 +1,6 @@
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy.orm import declared_attr
 
-
 db = SQLAlchemy()
 
 
@@ -16,16 +15,6 @@ class Installation(db.Model):
         'polymorphic_on': type,
         'polymorphic_identity': 'installation'
     }
-
-
-# class InstallationHiver(Installation):
-#     ouvert = db.Column(db.Boolean)
-#     deblaye = db.Column(db.Boolean)
-#     mise_a_jour = db.Column(db.DateTime)
-#
-#     __mapper_args__ = {
-#         'polymorphic_identity': 'installation_hiver'
-#     }
 
 
 class Glissade(Installation):
@@ -45,7 +34,35 @@ class Glissade(Installation):
 
     @declared_attr
     def mise_a_jour(cls):
-        return Installation.__table__.c.get('mise_a_jour', db.Column(db.DateTime))
+        return Installation.__table__.c.get('mise_a_jour',
+                                            db.Column(db.DateTime))
+
+    def __init__(self, nom, arrondissement, ouvert, deblaye, condition,
+                 mise_a_jour):
+        self.nom = nom
+        self.arrondissement = arrondissement
+        self.ouvert = ouvert
+        self.deblaye = deblaye
+        self.condition = condition
+        self.mise_a_jour = mise_a_jour
+
+    def __eq__(self, other):
+        if isinstance(other, self.__class__):
+            return self.nom == other.nom and \
+                   self.arrondissement == other.arrondissement and \
+                   self.ouvert == other.ouvert and \
+                   self.deblaye == other.deblaye and \
+                   self.condition == other.condition and \
+                   self.mise_a_jour == other.mise_a_jour
+        else:
+            return False
+
+    def update(self, other):
+        self.arrondissement = other.arrondissement
+        self.ouvert = other.ouvert
+        self.deblaye = other.deblaye
+        self.condition = other.condition
+        self.mise_a_jour = other.mise_a_jour
 
 
 class Patinoire(Installation):
@@ -66,7 +83,38 @@ class Patinoire(Installation):
 
     @declared_attr
     def mise_a_jour(cls):
-        return Installation.__table__.c.get('mise_a_jour', db.Column(db.DateTime))
+        return Installation.__table__.c.get('mise_a_jour',
+                                            db.Column(db.DateTime))
+
+    def __init__(self, nom, arrondissement, ouvert, deblaye, arrose, resurface,
+                 mise_a_jour):
+        self.nom = nom
+        self.arrondissement = arrondissement
+        self.ouvert = ouvert
+        self.deblaye = deblaye
+        self.arrose = arrose
+        self.resurface = resurface
+        self.mise_a_jour = mise_a_jour
+
+    def __eq__(self, other):
+        if isinstance(other, self.__class__):
+            return self.nom == other.nom and \
+                   self.arrondissement == other.arrondissement and \
+                   self.ouvert == other.ouvert and \
+                   self.deblaye == other.deblaye and \
+                   self.arrose == other.arrose and \
+                   self.resurface == other.resurface and \
+                   self.mise_a_jour == other.mise_a_jour
+        else:
+            return False
+
+    def update(self, other):
+        self.arrondissement = other.arrondissement
+        self.ouvert = other.ouvert
+        self.deblaye = other.deblaye
+        self.arrose = other.arrose
+        self.resurface = other.resurface
+        self.mise_a_jour = other.mise_a_jour
 
 
 class Piscine(Installation):
@@ -84,3 +132,48 @@ class Piscine(Installation):
     __mapper_args__ = {
         'polymorphic_identity': 'piscine'
     }
+
+    def __init__(self, nom, arrondissement, id_uev, type_piscine, adresse,
+                 propriete, gestion, equipement, point_x, point_y, longitude,
+                 latitude):
+        self.nom = nom
+        self.arrondissement = arrondissement
+        self.id_uev = id_uev
+        self.type_piscine = type_piscine
+        self.adresse = adresse
+        self.propriete = propriete
+        self.gestion = gestion
+        self.equipement = equipement
+        self.point_x = point_x
+        self.point_y = point_y
+        self.longitude = longitude
+        self.latitude = latitude
+
+    def __eq__(self, other):
+        if isinstance(other, self.__class__):
+            return self.nom == other.nom and \
+                   self.arrondissement == other.arrondissement and \
+                   self.id_uev == other.id_uev and \
+                   self.type_piscine == other.type_piscine and \
+                   self.adresse == other.adresse and \
+                   self.propriete == other.propriete and \
+                   self.gestion == other.gestion and \
+                   self.equipement == other.equipement and \
+                   self.point_x == other.point_x and \
+                   self.point_y == other.point_y and \
+                   self.longitude == other.longitude and \
+                   self.latitude == other.latitude
+        else:
+            return False
+
+    def update(self, other):
+        self.arrondissement = other.arrondissement
+        self.id_uev = other.id_uev
+        self.adresse = other.adresse
+        self.propriete = other.propriete
+        self.gestion = other.gestion
+        self.equipement = other.equipement
+        self.point_x = other.point_x
+        self.point_y = other.point_y
+        self.longitude = other.longitude
+        self.latitude = other.latitude
