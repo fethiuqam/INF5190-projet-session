@@ -40,5 +40,6 @@ def liste_installations():
 
 
 with app.app_context():
-    # importer_donnees()
+    db.create_all()
+    importer_donnees()
     demarrer_planification()
