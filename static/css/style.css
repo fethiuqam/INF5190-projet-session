@@ -1,0 +1,45 @@
+
+body {
+    min-height: 100vh;
+}
+
+.container {
+    background-color: #e3f2fd;
+    max-width: 1000px;
+    margin-top: 1em;
+    margin-bottom: 1em;
+    padding: 2em;
+    border-radius: 1em;
+}
+
+.container h1 {
+    text-align: center;
+    margin-bottom: 1em;
+}
+
+.search-form {
+    max-width: 600px;
+    margin: auto;
+}
+
+.search-form input {
+    margin-bottom: 1em;
+}
+
+.group {
+    position: relative;
+    padding-bottom: 25px;
+}
+
+.error {
+    position: absolute;
+    bottom: 0;
+    color: #dc3545;
+    visibility: visible;
+}
+
+.flash-error {
+    color: #dc3545;
+    margin: 1em 0;
+}
+

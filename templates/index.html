@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Application gestion des installations</title>
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='bootstrap/css/bootstrap.min.css') }}">
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='css/style.css') }}">
+
+</head>
+<body>
+
+<div class="container">
+
+    <h1>Application des installation de Montréal</h1>
+    <form action="/" method="get" id="rechercheForm" class="search-form">
+        <div class="input-group mb-3">
+            <input type="text" name="search"  id="rechercheInput" class="form-control"
+                   placeholder="Veuiller entrer le nom de l'arrondissement" >
+            <small class="error"></small>
+            <input type="submit" class="btn btn-outline-primary"
+                   value="Recherche">
+        </div>
+    </form>
+
+</div>
+
+<script src="{{ url_for('static', filename='jquery/jquery-3.6.0.min.js')}}"></script>
+<script src="{{ url_for('static', filename='bootstrap/js/bootstrap.min.js')}}"></script>
+<script src="{{ url_for('static', filename='js/index.js')}}"></script>
+</body>
+</html>
+
+
+
+
+
+
+
+
+

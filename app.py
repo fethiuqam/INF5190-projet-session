@@ -15,6 +15,11 @@ db.init_app(app)
 ma.init_app(app)
 
 
+@app.route('/')
+def index():
+    return render_template('index.html')
+
+
 @app.route('/doc')
 def documentation():
     return render_template('doc.html')
