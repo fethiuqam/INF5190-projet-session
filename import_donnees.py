@@ -1,12 +1,11 @@
 import pandas as pd
 import requests
 import xml.etree.ElementTree as ET
-from datetime import datetime
 from models import *
 
 url_piscine = 'https://data.montreal.ca/dataset/4604afb7-a7c4-4626-' \
-                       'a3ca-e136158133f2/resource/cbdca706-569e-4b4a-805d-' \
-                       '9af73af03b14/download/piscines.csv'
+              'a3ca-e136158133f2/resource/cbdca706-569e-4b4a-805d-' \
+              '9af73af03b14/download/piscines.csv'
 url_patinoire = 'https://data.montreal.ca/dataset/225ac315-49fe-476f-95bd-' \
                 'a1ce1648a98c/resource/5d1859cc-2060-4def-903f-db24408bacd0' \
                 '/download/l29-patinoire.xml'
@@ -41,14 +40,13 @@ def importer_donnees():
     for elem_glissade in root_glissade:
         nom = elem_glissade[0].text.strip()
         arrondissement = elem_glissade[1][0].text.strip()
-        date_maj = string_to_datetime(elem_glissade[1][2].text)
+        date_maj = elem_glissade[1][2].text.strip()
         ouvert = string_to_boolean(elem_glissade[2].text)
         deblaye = string_to_boolean(elem_glissade[3].text)
         condition = elem_glissade[4].text.strip()
         new_glissade = Glissade(nom, arrondissement, ouvert, deblaye,
                                 condition, date_maj)
-        glissade = Glissade.query \
-            .filter_by(nom=new_glissade.nom).first()
+        glissade = Glissade.query.filter_by(nom=new_glissade.nom).first()
         if glissade is None:
             db.session.add(new_glissade)
             db.session.commit()
@@ -64,13 +62,13 @@ def importer_donnees():
     for arr in root_patinoire:
         arrondissement = arr[0].text.strip()
         nom = arr[1][0].text.strip()
-        date_maj = string_to_datetime(arr[1][-1][0].text.strip())
+        date_maj = arr[1][-1][0].text.strip()
         ouvert = string_to_boolean(arr[1][-1][1].text)
         deblaye = string_to_boolean(arr[1][-1][2].text)
         arrose = string_to_boolean(arr[1][-1][3].text)
         resurface = string_to_boolean(arr[1][-1][4].text)
         new_patinoire = Patinoire(nom, arrondissement, ouvert, deblaye, arrose,
-                              resurface, date_maj)
+                                  resurface, date_maj)
         patinoire = Patinoire.query \
             .filter_by(nom=new_patinoire.nom).first()
         if patinoire is None:
@@ -95,12 +93,5 @@ def string_to_boolean(chaine):
         return False
     elif chaine == '1':
         return True
-    else:
-        return None
-
-
-def string_to_datetime(chaine):
-    if chaine:
-        return datetime.strptime(chaine, '%Y-%m-%d %H:%M:%S')
     else:
         return None

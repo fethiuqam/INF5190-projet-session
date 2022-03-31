@@ -1,5 +1,6 @@
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy.orm import declared_attr
+from datetime import datetime
 
 db = SQLAlchemy()
 
@@ -44,7 +45,7 @@ class Glissade(Installation):
         self.ouvert = ouvert
         self.deblaye = deblaye
         self.condition = condition
-        self.mise_a_jour = mise_a_jour
+        self.mise_a_jour = string_to_datetime(mise_a_jour)
 
     def __eq__(self, other):
         if isinstance(other, self.__class__):
@@ -94,7 +95,7 @@ class Patinoire(Installation):
         self.deblaye = deblaye
         self.arrose = arrose
         self.resurface = resurface
-        self.mise_a_jour = mise_a_jour
+        self.mise_a_jour = string_to_datetime(mise_a_jour)
 
     def __eq__(self, other):
         if isinstance(other, self.__class__):
@@ -177,3 +178,13 @@ class Piscine(Installation):
         self.point_y = other.point_y
         self.longitude = other.longitude
         self.latitude = other.latitude
+
+
+def string_to_datetime(chaine):
+    if chaine:
+        try:
+            #return datetime.strptime(chaine, '%Y-%m-%d %H:%M:%S')
+            return datetime.fromisoformat(chaine)
+        except ValueError as err:
+            print("Erreur : Le format de la date ne respecte pas la forme ISO 8601")
+    return None

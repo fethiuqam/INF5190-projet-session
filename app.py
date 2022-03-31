@@ -2,6 +2,8 @@ from flask import Flask
 from flask import request
 from flask import render_template
 from flask import jsonify
+from flask_json_schema import JsonSchema
+from flask_json_schema import JsonValidationError
 
 from planification import demarrer_planification
 from models import *
@@ -13,6 +15,13 @@ app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///db/sqlite.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db.init_app(app)
 ma.init_app(app)
+schema = JsonSchema(app)
+
+
+@app.errorhandler(JsonValidationError)
+def validation_error(e):
+    errors = [validation_error.message for validation_error in e.errors]
+    return jsonify({'error': e.message, 'errors': errors}), 400
 
 
 @app.route('/')
@@ -42,6 +51,17 @@ def liste_installations():
         Installation.nom).all()
     data = installations_schema.dump(installations)
     return jsonify(data)
+
+
+@app.route('/api/glissade/<id>', methods=["PUT"])
+@schema.validate(glissade_update_schema)
+def modify_glissade(id):
+    glissade = Glissade.query. get_or_404(id)
+    data = request.get_json()
+    new_glissade = Glissade(**data)
+    glissade.update(new_glissade)
+    db.session.commit()
+    return glissade_schema.dump(glissade)
 
 
 with app.app_context():

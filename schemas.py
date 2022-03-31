@@ -1,5 +1,5 @@
 from flask_marshmallow import Marshmallow
-
+from models import *
 ma = Marshmallow()
 
 
@@ -18,8 +18,40 @@ installations_schema = InstallationSchema(many=True)
 
 class GlissadeSchema(ma.Schema):
     class Meta:
-        fields = ('nom', 'type', 'arrondissement', 'ouvert')
+        model = Glissade
+        fields = ('id', 'nom', 'arrondissement', 'ouvert', 'deblaye',
+                  'condition', 'mise_a_jour')
 
 
 glissade_schema = GlissadeSchema()
 glissades_schema = GlissadeSchema(many=True)
+
+# json-schema
+
+glissade_update_schema = {
+    'type': 'object',
+    'required': ['nom', 'arrondissement', 'ouvert', 'deblaye',
+                 'condition', 'mise_a_jour'],
+    'properties': {
+        'nom': {
+            'type': 'string'
+        },
+        'arrondissement': {
+            'type': 'string'
+        },
+        'ouvert': {
+            'type': ['boolean', 'null']
+        },
+        'deblaye': {
+            'type': ['boolean', 'null']
+        },
+        'condition': {
+            'type': ['string', 'null']
+        },
+        'mise_a_jour': {
+            'type': 'string',
+            'format': 'date'
+        }
+    },
+    'additionalProperties': False
+}
