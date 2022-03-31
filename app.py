@@ -64,6 +64,14 @@ def modify_glissade(id):
     return glissade_schema.dump(glissade)
 
 
+@app.route('/api/glissade/<id>', methods=["DELETE"])
+def delete_glissade(id):
+    glissade = Glissade.query. get_or_404(id)
+    db.session.delete(glissade)
+    db.session.commit()
+    return "", 200
+
+
 with app.app_context():
     db.create_all()
     importer_donnees()
