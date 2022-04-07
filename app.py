@@ -37,29 +37,33 @@ def documentation():
 @app.route('/api/installations/')
 def installations():
     if request.args.get('arrondissement'):
-        installations = Installation.query.filter(Installation.arrondissement.ilike(f'%{request.args.get("arrondissement")}%'))
-            #filter_by(
-            #arrondissement=request.args.get('arrondissement'))
+        installations = Installation.query.filter(
+            Installation.arrondissement.ilike(
+                f'%{request.args.get("arrondissement")}%')).order_by(
+            Installation.nom).all()
+    elif request.args.get('nom'):
+        installations = Installation.query.filter_by(
+            nom=request.args.get('nom')).order_by(
+            Installation.nom).all()
     else:
-        installations = Installation.query.all()
-    #data = set([installation.nom for installation in installations])
+        installations = Installation.query.order_by(
+            Installation.nom).all()
     data = installations_schema.dump(installations)
     return jsonify(data)
-    #return jsonify(list(data))
 
 
-@app.route('/api/liste_installations/')
+@app.route('/api/liste-installations/')
 def liste_installations():
     installations = db.session.query(Installation).order_by(
         Installation.nom).all()
-    data = installations_schema.dump(installations)
+    data = list(dict.fromkeys([inst.nom for inst in installations]))
     return jsonify(data)
 
 
 @app.route('/api/glissade/<id>', methods=["PUT"])
 @schema.validate(glissade_update_schema)
 def modify_glissade(id):
-    glissade = Glissade.query. get_or_404(id)
+    glissade = Glissade.query.get_or_404(id)
     data = request.get_json()
     new_glissade = Glissade(**data)
     glissade.update(new_glissade)
@@ -69,7 +73,7 @@ def modify_glissade(id):
 
 @app.route('/api/glissade/<id>', methods=["DELETE"])
 def delete_glissade(id):
-    glissade = Glissade.query. get_or_404(id)
+    glissade = Glissade.query.get_or_404(id)
     db.session.delete(glissade)
     db.session.commit()
     return "", 200
@@ -78,7 +82,7 @@ def delete_glissade(id):
 @app.route('/api/patinoire/<id>', methods=["PUT"])
 @schema.validate(patinoire_update_schema)
 def modify_patinoire(id):
-    patinoire = Patinoire.query. get_or_404(id)
+    patinoire = Patinoire.query.get_or_404(id)
     data = request.get_json()
     new_patinoire = Patinoire(**data)
     patinoire.update(new_patinoire)
@@ -88,7 +92,7 @@ def modify_patinoire(id):
 
 @app.route('/api/patinoire/<id>', methods=["DELETE"])
 def delete_patinoire(id):
-    patinoire = Patinoire.query. get_or_404(id)
+    patinoire = Patinoire.query.get_or_404(id)
     db.session.delete(patinoire)
     db.session.commit()
     return "", 200
@@ -97,7 +101,7 @@ def delete_patinoire(id):
 @app.route('/api/piscine/<id>', methods=["PUT"])
 @schema.validate(piscine_update_schema)
 def modify_piscine(id):
-    piscine = Piscine.query. get_or_404(id)
+    piscine = Piscine.query.get_or_404(id)
     data = request.get_json()
     new_piscine = Piscine(**data)
     piscine.update(new_piscine)
@@ -107,7 +111,7 @@ def modify_piscine(id):
 
 @app.route('/api/piscine/<id>', methods=["DELETE"])
 def delete_piscine(id):
-    piscine = Piscine.query. get_or_404(id)
+    piscine = Piscine.query.get_or_404(id)
     db.session.delete(piscine)
     db.session.commit()
     return "", 200

@@ -14,15 +14,32 @@
 <div id="container" class="container">
 
     <h1>Application des installation de Montréal</h1>
-    <form action="/" method="get" id="rechercheForm" class="search-form">
-        <div class="input-group mb-3">
-            <input type="text" name="search"  id="rechercheInput" class="form-control"
-                   placeholder="Veuiller entrer le nom de l'arrondissement" >
-            <small class="error"></small>
-            <input type="submit" class="btn btn-outline-primary"
-                   value="Recherche">
+
+
+    <div class="row align-items-center">
+        <div class="col-12 col-md-6">
+            <form action="/" method="get" id="rechercheForm"
+                  class="search-form">
+                <label for="rechercheInput" class="form-label">Rechercher par arrondissement</label>
+                <div class="input-group mb-3">
+                    <input type="text" name="search" id="rechercheInput"
+                           class="form-control"
+                           placeholder="Saisissez un arrondissement">
+                    <small class="error" ></small>
+                    <input type="submit" class="btn btn-outline-primary"
+                           value="Recherche">
+                </div>
+            </form>
         </div>
-    </form>
+        <div class="col-12 col-md-6 group">
+            <label for="rechercheInput" class="form-label">Rechercher par installation</label>
+            <select id="rechercheSelect" class="form-select " >
+                <option selected>Selectionnez une installation</option>
+            </select>
+        </div>
+
+    </div>
+
 
     <div id="results"></div>
 
