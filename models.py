@@ -183,8 +183,8 @@ class Piscine(Installation):
 def string_to_datetime(chaine):
     if chaine:
         try:
-            #return datetime.strptime(chaine, '%Y-%m-%d %H:%M:%S')
             return datetime.fromisoformat(chaine)
         except ValueError as err:
-            print("Erreur : Le format de la date ne respecte pas la forme ISO 8601")
+            print("Erreur : Le format de la date ne respecte pas la forme "
+                  "ISO 8601")
     return None

@@ -5,8 +5,8 @@ from flask import jsonify
 from flask_json_schema import JsonSchema
 from flask_json_schema import JsonValidationError
 
-from planification import demarrer_planification
 from models import *
+from planification import demarrer_planification
 from import_donnees import importer_donnees
 from schemas import *
 
@@ -37,12 +37,15 @@ def documentation():
 @app.route('/api/installations/')
 def installations():
     if request.args.get('arrondissement'):
-        installations = Installation.query.filter_by(
-            arrondissement=request.args.get('arrondissement'))
+        installations = Installation.query.filter(Installation.arrondissement.ilike(f'%{request.args.get("arrondissement")}%'))
+            #filter_by(
+            #arrondissement=request.args.get('arrondissement'))
     else:
         installations = Installation.query.all()
-    data = set([installation.nom for installation in installations])
-    return jsonify(list(data))
+    #data = set([installation.nom for installation in installations])
+    data = installations_schema.dump(installations)
+    return jsonify(data)
+    #return jsonify(list(data))
 
 
 @app.route('/api/liste_installations/')
@@ -68,6 +71,44 @@ def modify_glissade(id):
 def delete_glissade(id):
     glissade = Glissade.query. get_or_404(id)
     db.session.delete(glissade)
+    db.session.commit()
+    return "", 200
+
+
+@app.route('/api/patinoire/<id>', methods=["PUT"])
+@schema.validate(patinoire_update_schema)
+def modify_patinoire(id):
+    patinoire = Patinoire.query. get_or_404(id)
+    data = request.get_json()
+    new_patinoire = Patinoire(**data)
+    patinoire.update(new_patinoire)
+    db.session.commit()
+    return patinoire_schema.dump(patinoire)
+
+
+@app.route('/api/patinoire/<id>', methods=["DELETE"])
+def delete_patinoire(id):
+    patinoire = Patinoire.query. get_or_404(id)
+    db.session.delete(patinoire)
+    db.session.commit()
+    return "", 200
+
+
+@app.route('/api/piscine/<id>', methods=["PUT"])
+@schema.validate(piscine_update_schema)
+def modify_piscine(id):
+    piscine = Piscine.query. get_or_404(id)
+    data = request.get_json()
+    new_piscine = Piscine(**data)
+    piscine.update(new_piscine)
+    db.session.commit()
+    return piscine_schema.dump(piscine)
+
+
+@app.route('/api/piscine/<id>', methods=["DELETE"])
+def delete_piscine(id):
+    piscine = Piscine.query. get_or_404(id)
+    db.session.delete(piscine)
     db.session.commit()
     return "", 200
 

@@ -23,16 +23,9 @@ def importer_donnees():
                               row['TYPE'], row['ADRESSE'], row['PROPRIETE'],
                               row['GESTION'], row['EQUIPEME'], row['POINT_X'],
                               row['POINT_Y'], row['LONG'], row['LAT'])
-        piscine = Piscine.query \
-            .filter_by(nom=new_piscine.nom,
-                       type_piscine=new_piscine.type_piscine).first()
-        if piscine is None:
-            db.session.add(new_piscine)
-            db.session.commit()
-            nouvelles_installations.append(new_piscine)
-        elif piscine != new_piscine:
-            piscine.update(new_piscine)
-            db.session.commit()
+        piscine = Piscine.query.filter_by(nom=new_piscine.nom,
+                        type_piscine=new_piscine.type_piscine).first()
+        update_data(piscine, new_piscine, nouvelles_installations)
 
     # importation des donnees des glissades
     data_glissade = requests.get(url_glissade, allow_redirects=True)
@@ -47,14 +40,7 @@ def importer_donnees():
         new_glissade = Glissade(nom, arrondissement, ouvert, deblaye,
                                 condition, date_maj)
         glissade = Glissade.query.filter_by(nom=new_glissade.nom).first()
-        if glissade is None:
-            db.session.add(new_glissade)
-            db.session.commit()
-            nouvelles_installations.append(new_glissade)
-        elif glissade != new_glissade and \
-                glissade.mise_a_jour < new_glissade.mise_a_jour:
-            glissade.update(new_glissade)
-            db.session.commit()
+        update_data(glissade, new_glissade, nouvelles_installations)
 
     # importation des donnees des patinoires
     data_patinoire = requests.get(url_patinoire, allow_redirects=True)
@@ -69,19 +55,21 @@ def importer_donnees():
         resurface = string_to_boolean(arr[1][-1][4].text)
         new_patinoire = Patinoire(nom, arrondissement, ouvert, deblaye, arrose,
                                   resurface, date_maj)
-        patinoire = Patinoire.query \
-            .filter_by(nom=new_patinoire.nom).first()
-        if patinoire is None:
-            db.session.add(new_patinoire)
-            db.session.commit()
-            nouvelles_installations.append(new_patinoire)
-        elif patinoire != new_patinoire and \
-                patinoire.mise_a_jour < new_patinoire.mise_a_jour:
-            patinoire.update(new_patinoire)
-            db.session.commit()
+        patinoire = Patinoire.query.filter_by(nom=new_patinoire.nom).first()
+        update_data(patinoire, new_patinoire, nouvelles_installations)
 
     print('Fin de l import des données')
     return nouvelles_installations
+
+
+def update_data(data, new_data, nouvelles_installations):
+    if data is None:
+        db.session.add(new_data)
+        db.session.commit()
+        nouvelles_installations.append(new_data)
+    elif data != new_data:
+        data.update(new_data)
+        db.session.commit()
 
 
 def string_to_boolean(chaine):
