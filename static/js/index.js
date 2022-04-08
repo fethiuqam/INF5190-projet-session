@@ -48,7 +48,6 @@ window.addEventListener("load", function () {
     function displayResults(resultat) {
         const types = ['glissade', 'patinoire', 'piscine'];
         const headers = [headerGlissade, headerPatinoire, headerPiscine];
-        const rows = [createRowGlissade, createRowPatinoire, createRowPiscine];
 
         results.innerHTML = '';
         if (resultat.length > 0) {
@@ -61,7 +60,7 @@ window.addEventListener("load", function () {
                     let title = document.createElement('h2');
                     title.innerText = 'Les ' + types[i] + 's';
                     results.append(title);
-                    let table = createTable(installations[i], headers[i], rows[i]);
+                    let table = createTable(installations[i], headers[i]);
                     results.append(table);
                 }
             }
@@ -70,7 +69,7 @@ window.addEventListener("load", function () {
         }
     }
 
-    function createTable(installations, header, createRow) {
+    function createTable(installations, header) {
         const divResponsive = document.createElement('div');
         divResponsive.className = 'table-responsive';
         let table = document.createElement("table");
@@ -88,85 +87,192 @@ window.addEventListener("load", function () {
         return divResponsive;
     }
 
-    const headerGlissade = '<tr><th scope="col">#</th>'
-        + '<th scope="col">Nom</th>'
-        + '<th scope="col">Arrondissement</th>'
-        + '<th scope="col">Ouvert</th>'
-        + '<th scope="col">Déblayée</th>'
-        + '<th scope="col">Condition</th>'
-        + '<th scope="col">Mise à jour</th>'
-        + '<th scope="col">Actions</th></tr>';
+    const headerGlissade = `<tr><th scope="col">Nom</th>
+                            <th scope="col">Arrondissement</th>
+                            <th scope="col">Ouvert</th>
+                            <th scope="col">Déblayée</th>
+                            <th scope="col">Condition</th>
+                            <th scope="col">Mise à jour</th>
+                            <th scope="col">Actions</th></tr>`;
 
-    function createRowGlissade(installation) {
+    const headerPatinoire = `<tr><th scope="col">Nom</th>
+                            <th scope="col">Arrondissement</th>
+                            <th scope="col">Ouvert</th>
+                            <th scope="col">Déblayée</th>
+                            <th scope="col">Arrosée</th>
+                            <th scope="col">Resurfacée</th>
+                            <th scope="col">Mise à jour</th>
+                            <th scope="col">Actions</th></tr>`;
+
+    const headerPiscine = `<tr><th scope="col">Nom</th>
+                       <th scope="col">Arrondissement</th>                           
+                       <th scope="col">Id UEV</th>'
+                       <th scope="col">Type de piscine</th>
+                       <th scope="col">Adresse</th>
+                       <th scope="col">Propriété</th>
+                       <th scope="col">Gestion</th>
+                       <th scope="col">Équipement</th>
+                       <th scope="col">Point X</th>
+                       <th scope="col">Point Y</th>
+                       <th scope="col">Longitude</th>
+                       <th scope="col">Latitude</th>
+                       <th scope="col">Actions</th></tr>`;
+
+
+    function createRow(inst) {
         let row = document.createElement('tr');
-        row.innerHTML = '<th scope="row">' + installation.id
-            + '</th><td>' + installation.nom
-            + '</td><td>' + installation.arrondissement
-            + '</td><td>' + installation.ouvert
-            + '</td><td>' + installation.deblaye
-            + '</td><td>' + installation.condition
-            + '</td><td>' + installation.mise_a_jour
-            + '</td><td>modifier supprimer</td>'
+        updateRow(row, inst)
         return row;
     }
 
-    const headerPatinoire = '<tr><th scope="col">#</th>'
-        + '<th scope="col">Nom</th>'
-        + '<th scope="col">Arrondissement</th>'
-        + '<th scope="col">Ouvert</th>'
-        + '<th scope="col">Déblayée</th>'
-        + '<th scope="col">Arrosée</th>'
-        + '<th scope="col">Resurfacée</th>'
-        + '<th scope="col">Mise à jour</th>'
-        + '<th scope="col">Actions</th></tr>';
+    function updateRow(row, inst) {
+        row.setAttribute('data-object', JSON.stringify(inst))
+        row.innerHTML = `<th>${inst.nom}</th>
+                        <td>${inst.arrondissement}</td>`;
+        if (inst.type === 'glissade') {
+            row.innerHTML += `<td>${inst.ouvert}</td>
+                            <td>${inst.deblaye}</td>
+                            <td>${inst.condition}</td>
+                            <td>${inst.mise_a_jour}</td>`;
+        } else if (inst.type === 'patinoire') {
+            row.innerHTML += `<td>${inst.ouvert}</td>
+                            <td>${inst.deblaye}</td>
+                            <td>${inst.arrose}</td>
+                            <td>${inst.resurface}</td>
+                            <td>${inst.mise_a_jour}</td>`;
+        } else {
+            row.innerHTML += `<td>${inst.id_uev}</td>
+                         <td>${inst.type_piscine}</td>
+                         <td>${inst.adresse}</td>
+                         <td>${inst.propriete}</td>
+                         <td>${inst.gestion}</td>
+                         <td>${inst.equipement}</td>
+                         <td>${inst.point_x}</td>
+                         <td>${inst.point_y}</td>
+                         <td>${inst.longitude}</td>
+                         <td>${inst.latitude}</td>`;
+        }
+        const actions = document.createElement('td');
+        actions.append(createButton('Modifier', 'btn btn-outline-success', modifierInstallation));
+        actions.append(createButton('Supprimer', 'btn btn-outline-danger', supprimerInstallation));
+        row.append(actions);
+    }
 
-    function createRowPatinoire(installation) {
-        let row = document.createElement('tr');
-        row.innerHTML = '<th scope="row">' + installation.id
-            + '</th><td>' + installation.nom
-            + '</td><td>' + installation.arrondissement
-            + '</td><td>' + installation.ouvert
-            + '</td><td>' + installation.deblaye
-            + '</td><td>' + installation.arrose
-            + '</td><td>' + installation.resurface
-            + '</td><td>' + installation.mise_a_jour
-            + '</td><td>modifier supprimer</td>'
+    function createButton(texte, classeName, callback) {
+        const button = document.createElement('button');
+        button.className = classeName;
+        button.innerText = texte;
+        button.addEventListener('click', callback);
+        return button;
+    }
+
+    function modifierInstallation(event) {
+        const row = event.target.parentElement.parentElement;
+        const inst = JSON.parse(row.dataset.object);
+        row.innerHTML = `<th><input type="text" class="form-control" value="${inst.nom}"></th>
+                        <td><input type="text" class="form-control" value="${inst.arrondissement}"></td>`;
+        if (inst.type === 'glissade') {
+            row.append(createSelectOuiNon(inst.ouvert));
+            row.append(createSelectOuiNon(inst.deblaye));
+            row.innerHTML += `<td><input type="text" class="form-control" value="${inst.condition}"></td>
+                          <td><input type="datetime-local" class="form-control" value="${inst.mise_a_jour}"></td>`;
+        } else if (inst.type === 'patinoire') {
+            row.append(createSelectOuiNon(inst.ouvert));
+            row.append(createSelectOuiNon(inst.deblaye));
+            row.append(createSelectOuiNon(inst.arrose));
+            row.append(createSelectOuiNon(inst.resurface));
+            row.innerHTML += `<td><input type="datetime-local" class="form-control" value="${inst.mise_a_jour}"></td>`;
+        } else {
+            row.innerHTML += `<td><input type="text" class="form-control" value="${inst.id_uev}"></td>
+                              <td><input type="text" class="form-control" value="${inst.type_piscine}"></td>
+                              <td><input type="text" class="form-control" value="${inst.adresse}"></td>
+                              <td><input type="text" class="form-control" value="${inst.propriete}"></td>
+                              <td><input type="text" class="form-control" value="${inst.gestion}"></td>
+                              <td><input type="text" class="form-control" value="${inst.equipement}"></td>
+                              <td><input type="text" class="form-control" value="${inst.point_x}"></td>
+                              <td><input type="text" class="form-control" value="${inst.point_y}"></td>
+                              <td><input type="number" class="form-control" value="${inst.longitude}"></td>
+                              <td><input type="number" class="form-control" value="${inst.latitude}"></td>`;
+        }
+        const actions = document.createElement('td');
+        actions.append(createButton('Confirmer', 'btn btn-outline-info', sauverModification));
+        actions.append(createButton('Annuler', 'btn btn-outline-secondary', annulerModification));
+        row.append(actions);
         return row;
     }
 
-    const headerPiscine = '<tr><th scope="col">#</th>'
-        + '<th scope="col">Nom</th>'
-        + '<th scope="col">Arrondissement</th>'
-        + '<th scope="col">Id UEV</th>'
-        + '<th scope="col">Type de piscine</th>'
-        + '<th scope="col">Adresse</th>'
-        + '<th scope="col">Propriété</th>'
-        + '<th scope="col">Gestion</th>'
-        + '<th scope="col">Équipement</th>'
-        + '<th scope="col">Point X</th>'
-        + '<th scope="col">Point Y</th>'
-        + '<th scope="col">Longitude</th>'
-        + '<th scope="col">Latitude</th>'
-        + '<th scope="col">Actions</th></tr>';
-
-    function createRowPiscine(installation) {
-        let row = document.createElement('tr');
-        row.innerHTML = '<th scope="row">' + installation.id
-            + '</th><td>' + installation.nom
-            + '</td><td>' + installation.arrondissement
-            + '</td><td>' + installation.id_uev
-            + '</td><td>' + installation.type_piscine
-            + '</td><td>' + installation.adresse
-            + '</td><td>' + installation.propriete
-            + '</td><td>' + installation.gestion
-            + '</td><td>' + installation.equipement
-            + '</td><td>' + installation.point_x
-            + '</td><td>' + installation.point_y
-            + '</td><td>' + installation.longitude
-            + '</td><td>' + installation.latitude
-            + '</td><td>modifier supprimer</td>'
-        return row;
+    function supprimerInstallation(event) {
+        const row = event.target.parentElement.parentElement;
+        console.log(row)
     }
+
+    function sauverModification(event) {
+        let row = event.target.parentElement.parentElement;
+        const inst = JSON.parse(row.dataset.object);
+        cells = row.children;
+        inst.nom = cells[0].firstChild.value;
+        inst.arrondissement = cells[1].firstChild.value;
+        if (inst.type === 'glissade') {
+            inst.ouvert = JSON.parse(cells[2].firstChild.value);
+            inst.deblaye = JSON.parse(cells[3].firstChild.value);
+            inst.condition = cells[4].firstChild.value;
+            inst.mise_a_jour = cells[5].firstChild.value;
+        } else if (inst.type === 'patinoire') {
+            inst.ouvert = JSON.parse(cells[2].firstChild.value);
+            inst.deblaye = JSON.parse(cells[3].firstChild.value);
+            inst.arrose = JSON.parse(cells[4].firstChild.value);
+            inst.resurface = JSON.parse(cells[5].firstChild.value);
+            inst.mise_a_jour = cells[6].firstChild.value;
+        } else {
+            inst.id_uev = cells[2].firstChild.value;
+            inst.type_piscine = cells[3].firstChild.value;
+            inst.adresse = cells[4].firstChild.value;
+            inst.propriete = cells[5].firstChild.value;
+            inst.gestion = cells[6].firstChild.value;
+            inst.equipement = cells[7].firstChild.value;
+            inst.point_x = cells[8].firstChild.value;
+            inst.point_y = cells[9].firstChild.value;
+            inst.longitude = cells[10].firstChild.value;
+            inst.latitude = cells[11].firstChild.value;
+        }
+        const inst_api = Object.assign({}, inst);
+        delete inst_api.id;
+        delete inst_api.type;
+        fetch(`/api/${inst.type}/${inst.id}`, {
+            method: 'PUT',
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(inst_api)
+        }).then(res => {
+            if (res.status === 200) {
+                row.innerHTML = '';
+                updateRow(row, inst);
+            }
+            throw Error
+        }).catch(e => {
+            console.log('Erreur: ', e);
+        });
+    }
+
+    function annulerModification(event) {
+        const row = event.target.parentElement.parentElement;
+        const inst = JSON.parse(row.dataset.object);
+        row.innerHTML = '';
+        updateRow(row, inst);
+    }
+
+    function createSelectOuiNon(value) {
+        const td = document.createElement('td');
+        td.innerHTML = `<select class="form-control" >
+                          <option value="null" ${value === null ? "selected" : ""}  >Sans objet</option>
+                          <option value="true" ${value === true ? "selected" : ""} >Oui</option>
+                          <option value="false" ${value === false ? "selected" : ""} >Non</option>
+                        </select>`;
+        return td;
+    }
+
 
     function setError(formControl, errorMessage) {
         const errorSpan = formControl.parentElement.querySelector('.error');
@@ -193,7 +299,6 @@ window.addEventListener("load", function () {
         })
     }
 
-    console.log('loaded');
     chargerListeInstallations();
 });
 
