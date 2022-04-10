@@ -1,36 +1,436 @@
 #%RAML 1.0
 title: Documentation de l'API REST des installations de la ville de Montréal
 mediaType: application/json
+baseUri: http://localhost:5000
+version: 1
+
 types:
   Installation:
-    properties:
-      nom:
-        type: string
-        required: true
-      type:
-        type: string
-        required: true
+    {
+      'type': 'object',
+      'required': [ 'id', 'nom', 'type', 'arrondissement', 'condition', 'ouvert',
+                    'deblaye', 'mise_a_jour', 'arrose', 'resurface', 'id_uev',
+                    'type_piscine', 'adresse', 'propriete', 'gestion',
+                    'equipement', 'point_x', 'point_y', 'longitude', 'latitude' ],
+      'properties': {
+        'id': {
+          'type': 'number'
+        },
+        'nom': {
+          'type': 'string'
+        },
+        'type': {
+          'type': 'string'
+        },
+        'arrondissement': {
+          'type': 'string'
+        },
+        'ouvert': {
+          'type': [ 'boolean', 'null' ]
+        },
+        'deblaye': {
+          'type': [ 'boolean', 'null' ]
+        },
+        'condition': {
+          'type': [ 'string', 'null' ]
+        },
+        'mise_a_jour': {
+          'type': 'string'
+        },
+        'arrose': {
+          'type': [ 'boolean', 'null' ]
+        },
+        'resurface': {
+          'type': [ 'boolean', 'null' ]
+        },
+        'id_uev': {
+          'type': [ 'number', 'null' ]
+        },
+        'type_piscine': {
+          'type': 'string'
+        },
+        'adresse': {
+          'type': [ 'string', 'null' ]
+        },
+        'propriete': {
+          'type': [ 'string', 'null' ]
+        },
+        'gestion': {
+          'type': [ 'string', 'null' ]
+        },
+        'equipement': {
+          'type': [ 'string', 'null' ]
+        },
+        'point_x': {
+          'type': [ 'string', 'null' ]
+        },
+        'point_y': {
+          'type': [ 'string', 'null' ]
+        },
+        'longitude': {
+          'type': [ 'number', 'null' ]
+        },
+        'latitude': {
+          'type': [ 'number', 'null' ]
+        }
+      },
+    }
 
-#  ExistingPerson:
-#    properties:
-#      id:
-#        type: string
-#        required: true
-#      lastname:
-#        type: string
-#        required: true
-#      firstname:
-#        type: string
-#        required: true
-#      age:
-#        type: number
-#        required: true
+  Glissade:
+    {
+      'type': 'object',
+      'required': ['id', 'nom', 'arrondissement', 'ouvert', 'deblaye',
+                    'condition', 'mise_a_jour' ],
+      'properties': {
+        'id': {
+          'type': 'number'
+        },
+        'nom': {
+          'type': 'string'
+        },
+        'arrondissement': {
+          'type': 'string'
+        },
+        'ouvert': {
+          'type': [ 'boolean', 'null' ]
+        },
+        'deblaye': {
+          'type': [ 'boolean', 'null' ]
+        },
+        'condition': {
+          'type': [ 'string', 'null' ]
+        },
+        'mise_a_jour': {
+          'type': 'string'
+        }
+      },
+    }
+
+  Patinoire:
+    {
+      'type': 'object',
+      'required': ['id', 'nom', 'arrondissement', 'ouvert', 'deblaye',
+                    'arrose', 'resurface', 'mise_a_jour' ],
+      'properties': {
+        'id': {
+          'type': 'number'
+        },
+        'nom': {
+          'type': 'string'
+        },
+        'arrondissement': {
+          'type': 'string'
+        },
+        'ouvert': {
+          'type': [ 'boolean', 'null' ]
+        },
+        'deblaye': {
+          'type': [ 'boolean', 'null' ]
+        },
+        'arrose': {
+          'type': [ 'boolean', 'null' ]
+        },
+        'resurface': {
+          'type': [ 'boolean', 'null' ]
+        },
+        'mise_a_jour': {
+          'type': 'string',
+        }
+      },
+    }
+
+  Piscine:
+    {
+      'type': 'object',
+      'required': ['id', 'nom', 'arrondissement', 'id_uev', 'type_piscine', 'adresse',
+                    'propriete', 'gestion', 'equipement', 'point_x', 'point_y',
+                    'longitude', 'latitude' ],
+      'properties': {
+        'id': {
+          'type': 'number'
+        },
+        'nom': {
+          'type': 'string'
+        },
+        'arrondissement': {
+          'type': 'string'
+        },
+        'id_uev': {
+          'type': [ 'number', 'null' ]
+        },
+        'type_piscine': {
+          'type': 'string'
+        },
+        'adresse': {
+          'type': [ 'string', 'null' ]
+        },
+        'propriete': {
+          'type': [ 'string', 'null' ]
+        },
+        'gestion': {
+          'type': [ 'string', 'null' ]
+        },
+        'equipement': {
+          'type': [ 'string', 'null' ]
+        },
+        'point_x': {
+          'type': [ 'string', 'null' ]
+        },
+        'point_y': {
+          'type': [ 'string', 'null' ]
+        },
+        'longitude': {
+          'type': [ 'number', 'null' ]
+        },
+        'latitude': {
+          'type': [ 'number', 'null' ]
+        }
+      },
+    }
+
 /api:
   /installations:
     get:
-      description: extrait la liste des installations filtrée par le nom de l'arrondissement.
+      description: Liste de toutes les installations ordonnées par nom, qui correspondent aux critères de requête
+        s'ils sont fournis, sinon toute les installations existante.
+      queryParameters:
+        arrondissement?: string
+        nom?: string
       responses:
         200:
           body:
             application/json:
               type: Installation[]
+              example:
+                [
+                  {
+                    "arrondissement": "LaSalle",
+                    "arrose": false,
+                    "deblaye": true,
+                    "id": 384,
+                    "mise_a_jour": "2022-03-15T13:44:59",
+                    "nom": "Aire de glissade , Parc des rapides ()",
+                    "ouvert": null,
+                    "resurface": false,
+                    "type": "patinoire"
+                  },
+                  {
+                    "arrondissement": "LaSalle",
+                    "condition": "N/A",
+                    "deblaye": false,
+                    "id": 381,
+                    "mise_a_jour": "2022-03-15T13:44:59",
+                    "nom": "Aire de glissade, Parc Hayward",
+                    "ouvert": null,
+                    "type": "glissade"
+                  },
+                  {
+                    "adresse": "1 411, Rue Lapierre",
+                    "arrondissement": "LaSalle",
+                    "equipement": "Complexe aquatique",
+                    "gestion": "Privé",
+                    "id": 367,
+                    "id_uev": 4156343,
+                    "latitude": 45.43654,
+                    "longitude": -73.608196,
+                    "nom": "L’Aquadôme LaSalle",
+                    "point_x": "296335,6987",
+                    "point_y": "5032962552",
+                    "propriete": "Municipale",
+                    "type": "piscine",
+                    "type_piscine": "Piscine intérieure"
+                  }
+                ]
+
+  /liste-installations:
+    get:
+      description: Liste ordonnée de toutes les nom d'installations.
+      responses:
+        200:
+          body:
+            application/json:
+              type: string[]
+              example:
+                [
+                  "Centre Rosemont",
+                  "Centre aquatique Rivières-des-Prairies",
+                  "Centre communautaire Notre-Dame-de-Grâce",
+                  "Centre du Plateau",
+                  "Centre sportif Côte-des-Neiges"
+                ]
+
+  /glissade:
+    /{id}:
+      put:
+        description: Modifie les données d'une glissade, spécifiée par son id.
+          Ce n'est pas possible de modifier l'id.
+        body:
+          application/json:
+            type: Glissade
+            example:
+              {
+                "arrondissement": "LaSalle",
+                "condition": "N/A",
+                "deblaye": null,
+                "mise_a_jour": "2022-03-15T13:44:59",
+                "nom": "Aire de glissade, Parc Hayward",
+                "ouvert": true,
+              }
+        responses:
+          200:
+            body:
+              application/json:
+                type: Glissade
+                example:
+                  {
+                    "id": 313,
+                    "arrondissement": "LaSalle",
+                    "condition": "N/A",
+                    "deblaye": false,
+                    "mise_a_jour": "2022-03-15T13:44:59",
+                    "nom": "Aire de glissade, Parc Hayward",
+                    "ouvert": true,
+                  }
+          404:
+            description: L'id de la glissade spécifié n'existe pas.
+          400:
+            description: La structure de l'objet json ne correspond pas au schema attendu.
+            body:
+              application/json:
+                type: object
+                example:
+                  {
+                    "error": "Error validating against schema",
+                    "errors": [
+                        "'mise_a_jour' is a required property"
+                    ]
+                  }
+      delete:
+        description: Supprime une glissade, spécifiée par son id.
+        responses:
+          200:
+            description: La glissade est supprimée avec succès.
+          404:
+            description: L'id de la glissade spécifié n'existe pas.
+
+  /patinoire:
+    /{id}:
+      put:
+        description: Modifie les données d'une patinoire, spécifiée par son id.
+          Ce n'est pas possible de modifier l'id.
+        body:
+          application/json:
+            type: Patinoire
+            example:
+              {
+                "arrondissement": "LaSalle",
+                "arrose": false,
+                "deblaye": true,
+                "mise_a_jour": "2022-03-15T13:44:59",
+                "nom": "Aire de glissade , Parc des rapides ()",
+                "ouvert": null,
+                "resurface": false,
+              }
+        responses:
+          200:
+            body:
+              application/json:
+                type: Patinoire
+                example:
+                  {
+                    "arrondissement": "LaSalle",
+                    "arrose": null,
+                    "deblaye": true,
+                    "id": 384,
+                    "mise_a_jour": "2022-03-15T13:44:59",
+                    "nom": "Aire de glissade , Parc des rapides ()",
+                    "ouvert": null,
+                    "resurface": false,
+                  }
+          404:
+            description: L'id de la patinoire spécifié n'existe pas.
+          400:
+            description: La structure de l'objet json ne correspond pas au schema attendu.
+            body:
+              application/json:
+                type: object
+                example:
+                  {
+                    "error": "Error validating against schema",
+                    "errors": [
+                        "'mise_a_jour' is a required property"
+                    ]
+                  }
+      delete:
+        description: Supprime une patinoire, spécifiée par son id.
+        responses:
+          200:
+            description: La patinoire est supprimée avec succès.
+          404:
+            description: L'id de la patinoire spécifié n'existe pas.
+
+  /piscine:
+    /{id}:
+      put:
+        description: Modifie les données d'une piscine, spécifiée par son id.
+          Ce n'est pas possible de modifier l'id.
+        body:
+          application/json:
+            type: Piscine
+            example:
+              {
+                "adresse": "1 411, Rue Lapierre",
+                "arrondissement": "LaSalle",
+                "equipement": "Complexe aquatique",
+                "gestion": "Privé",
+                "id_uev": 4156343,
+                "latitude": 45.43654,
+                "longitude": -73.608196,
+                "nom": "L’Aquadôme LaSalle",
+                "point_x": "296335,6987",
+                "point_y": "5032962552",
+                "propriete": "Municipale",
+                "type_piscine": "Piscine intérieure"
+              }
+        responses:
+          200:
+            body:
+              application/json:
+                type: Piscine
+                example:
+                  {
+                    "adresse": "1 411, Rue Lapierre",
+                    "arrondissement": "LaSalle",
+                    "equipement": "Complexe aquatique",
+                    "gestion": "Privé",
+                    "id": 367,
+                    "id_uev": 4156343,
+                    "latitude": 45.43654,
+                    "longitude": -73.608196,
+                    "nom": "L’Aquadôme LaSalle",
+                    "point_x": "296335,6987",
+                    "point_y": "5032962552",
+                    "propriete": "Municipale",
+                    "type_piscine": "Piscine intérieure"
+                  }
+          404:
+            description: L'id de la piscine spécifié n'existe pas.
+          400:
+            description: La structure de l'objet json ne correspond pas au schema attendu.
+            body:
+              application/json:
+                type: object
+                example:
+                  {
+                    "error": "Error validating against schema",
+                    "errors": [
+                        "'point_x' is a required property"
+                    ]
+                  }
+      delete:
+        description: Supprime une piscine, spécifiée par son id.
+        responses:
+          200:
+            description: La piscine est supprimée avec succès.
+          404:
+            description: L'id de la piscine spécifié n'existe pas.

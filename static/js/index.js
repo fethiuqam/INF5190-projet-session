@@ -1,19 +1,20 @@
 window.addEventListener("load", function () {
-    const rechercheForm = document.getElementById('rechercheForm');
-    const rechercheSelect = document.getElementById('rechercheSelect');
+    const searchArrondissement = document.getElementById('search-arrondissement');
+    const searchInput = document.getElementById('search-input');
+    const searchInstallation = document.getElementById('search-installation');
 
-    const rechercheInput = document.getElementById('rechercheInput');
     const results = document.getElementById('results');
+    const flashAlert = document.getElementById('flash-alert');
 
-    rechercheForm.addEventListener('submit', chercherInstallationsParArrondissement);
-    rechercheSelect.addEventListener('change', chercherInstallationsParNom);
+    searchArrondissement.addEventListener('submit', searchInstallationByArrondissement);
+    searchInstallation.addEventListener('change', searchInstallationByName);
 
 
-    function chercherInstallationsParArrondissement(event) {
+    function searchInstallationByArrondissement(event) {
         event.preventDefault();
-        let value = rechercheInput.value.trim();
+        let value = searchInput.value.trim();
         if (value.length == 0) {
-            setError(rechercheInput, "Ce champ est requis.");
+            setError(searchInput, "Ce champ est requis.");
         } else {
             fetch('/api/installations?arrondissement=' + value).then(res => {
                 if (res.status === 200) {
@@ -28,8 +29,8 @@ window.addEventListener("load", function () {
         }
     }
 
-    function chercherInstallationsParNom() {
-        let value = rechercheSelect.value;
+    function searchInstallationByName() {
+        let value = searchInstallation.value;
         if (value.length > 0) {
             fetch('/api/installations?nom=' + value).then(res => {
                 if (res.status === 200) {
@@ -52,8 +53,8 @@ window.addEventListener("load", function () {
         results.innerHTML = '';
         if (resultat.length > 0) {
             const installations = []
-            for (t of types) {
-                installations.push(resultat.filter((inst) => inst.type === t));
+            for (tp of types) {
+                installations.push(resultat.filter((inst) => inst.type === tp));
             }
             for (let i = 0; i < installations.length; ++i) {
                 if (installations[i].length > 0) {
@@ -72,15 +73,15 @@ window.addEventListener("load", function () {
     function createTable(installations, header) {
         const divResponsive = document.createElement('div');
         divResponsive.className = 'table-responsive';
-        let table = document.createElement("table");
+        const table = document.createElement("table");
         table.className = "table table-hover";
         divResponsive.append(table);
-        let thead = document.createElement("thead");
+        const thead = document.createElement("thead");
         thead.innerHTML = header;
         table.append(thead);
-        let tbody = document.createElement('tbody');
+        const tbody = document.createElement('tbody');
         installations.forEach(inst => {
-            let row = createRow(inst);
+            const row = createRow(inst);
             tbody.append(row);
         });
         table.append(tbody)
@@ -130,16 +131,16 @@ window.addEventListener("load", function () {
         row.innerHTML = `<th>${inst.nom}</th>
                         <td>${inst.arrondissement}</td>`;
         if (inst.type === 'glissade') {
-            row.innerHTML += `<td>${inst.ouvert}</td>
-                            <td>${inst.deblaye}</td>
+            row.innerHTML += `<td>${displayBooleanNull(inst.ouvert)}</td>
+                            <td>${displayBooleanNull(inst.deblaye)}</td>
                             <td>${inst.condition}</td>
-                            <td>${inst.mise_a_jour}</td>`;
+                            <td>${displayDate(inst.mise_a_jour)}</td>`;
         } else if (inst.type === 'patinoire') {
-            row.innerHTML += `<td>${inst.ouvert}</td>
-                            <td>${inst.deblaye}</td>
-                            <td>${inst.arrose}</td>
-                            <td>${inst.resurface}</td>
-                            <td>${inst.mise_a_jour}</td>`;
+            row.innerHTML += `<td>${displayBooleanNull(inst.ouvert)}</td>
+                            <td>${displayBooleanNull(inst.deblaye)}</td>
+                            <td>${displayBooleanNull(inst.arrose)}</td>
+                            <td>${displayBooleanNull(inst.resurface)}</td>
+                            <td>${displayDate(inst.mise_a_jour)}</td>`;
         } else {
             row.innerHTML += `<td>${inst.id_uev}</td>
                          <td>${inst.type_piscine}</td>
@@ -153,34 +154,47 @@ window.addEventListener("load", function () {
                          <td>${inst.latitude}</td>`;
         }
         const actions = document.createElement('td');
-        actions.append(createButton('Modifier', 'btn btn-outline-success', modifierInstallation));
-        actions.append(createButton('Supprimer', 'btn btn-outline-danger', supprimerInstallation));
+        actions.append(createButton('Modifier', 'btn btn-outline-success', modifyInstallation));
+        actions.append(createButton('Supprimer', 'btn btn-outline-danger', deleteInstallation));
         row.append(actions);
     }
 
-    function createButton(texte, classeName, callback) {
+    function displayBooleanNull(value){
+        if(value === null)
+            return 'Néant';
+        else if (value === true)
+            return 'Oui';
+        else
+            return 'Non';
+    }
+
+    function displayDate(value){
+        return new Date(value).toLocaleString('fr-CA');
+    }
+
+    function createButton(text, classeName, callback) {
         const button = document.createElement('button');
         button.className = classeName;
-        button.innerText = texte;
+        button.innerText = text;
         button.addEventListener('click', callback);
         return button;
     }
 
-    function modifierInstallation(event) {
+    function modifyInstallation(event) {
         const row = event.target.parentElement.parentElement;
         const inst = JSON.parse(row.dataset.object);
         row.innerHTML = `<th><input type="text" class="form-control" value="${inst.nom}"></th>
                         <td><input type="text" class="form-control" value="${inst.arrondissement}"></td>`;
         if (inst.type === 'glissade') {
-            row.append(createSelectOuiNon(inst.ouvert));
-            row.append(createSelectOuiNon(inst.deblaye));
+            row.append(createSelectBooleanNull(inst.ouvert));
+            row.append(createSelectBooleanNull(inst.deblaye));
             row.innerHTML += `<td><input type="text" class="form-control" value="${inst.condition}"></td>
                           <td><input type="datetime-local" class="form-control" value="${inst.mise_a_jour}"></td>`;
         } else if (inst.type === 'patinoire') {
-            row.append(createSelectOuiNon(inst.ouvert));
-            row.append(createSelectOuiNon(inst.deblaye));
-            row.append(createSelectOuiNon(inst.arrose));
-            row.append(createSelectOuiNon(inst.resurface));
+            row.append(createSelectBooleanNull(inst.ouvert));
+            row.append(createSelectBooleanNull(inst.deblaye));
+            row.append(createSelectBooleanNull(inst.arrose));
+            row.append(createSelectBooleanNull(inst.resurface));
             row.innerHTML += `<td><input type="datetime-local" class="form-control" value="${inst.mise_a_jour}"></td>`;
         } else {
             row.innerHTML += `<td><input type="text" class="form-control" value="${inst.id_uev}"></td>
@@ -195,20 +209,26 @@ window.addEventListener("load", function () {
                               <td><input type="number" class="form-control" value="${inst.latitude}"></td>`;
         }
         const actions = document.createElement('td');
-        actions.append(createButton('Confirmer', 'btn btn-outline-info', sauverModification));
-        actions.append(createButton('Annuler', 'btn btn-outline-secondary', annulerModification));
+        actions.append(createButton('Confirmer', 'btn btn-outline-info', saveModification));
+        actions.append(createButton('Annuler', 'btn btn-outline-secondary', cancelModification));
         row.append(actions);
         return row;
     }
 
-    function supprimerInstallation(event) {
-        const row = event.target.parentElement.parentElement;
-        console.log(row)
+    function createSelectBooleanNull(value) {
+        const td = document.createElement('td');
+        td.innerHTML = `<select class="form-control" >
+                          <option value="null" ${value === null ? "selected" : ""}  >Néant</option>
+                          <option value="true" ${value === true ? "selected" : ""} >Oui</option>
+                          <option value="false" ${value === false ? "selected" : ""} >Non</option>
+                        </select>`;
+        return td;
     }
 
-    function sauverModification(event) {
+    function saveModification(event) {
         let row = event.target.parentElement.parentElement;
         const inst = JSON.parse(row.dataset.object);
+        const oldInst = Object.assign({}, inst);
         cells = row.children;
         inst.nom = cells[0].firstChild.value;
         inst.arrondissement = cells[1].firstChild.value;
@@ -224,7 +244,7 @@ window.addEventListener("load", function () {
             inst.resurface = JSON.parse(cells[5].firstChild.value);
             inst.mise_a_jour = cells[6].firstChild.value;
         } else {
-            inst.id_uev = cells[2].firstChild.value;
+            inst.id_uev = parseInt(cells[2].firstChild.value);
             inst.type_piscine = cells[3].firstChild.value;
             inst.adresse = cells[4].firstChild.value;
             inst.propriete = cells[5].firstChild.value;
@@ -232,12 +252,12 @@ window.addEventListener("load", function () {
             inst.equipement = cells[7].firstChild.value;
             inst.point_x = cells[8].firstChild.value;
             inst.point_y = cells[9].firstChild.value;
-            inst.longitude = cells[10].firstChild.value;
-            inst.latitude = cells[11].firstChild.value;
+            inst.longitude = parseFloat(cells[10].firstChild.value);
+            inst.latitude = parseFloat(cells[11].firstChild.value);
         }
         const inst_api = Object.assign({}, inst);
-        delete inst_api.id;
         delete inst_api.type;
+        delete inst_api.id;
         fetch(`/api/${inst.type}/${inst.id}`, {
             method: 'PUT',
             headers: {
@@ -247,30 +267,70 @@ window.addEventListener("load", function () {
             body: JSON.stringify(inst_api)
         }).then(res => {
             if (res.status === 200) {
+                displayFlashAlert('La modification s\'est bien déroulée.', 'success');
                 row.innerHTML = '';
                 updateRow(row, inst);
+            } else {
+                displayFlashAlert('La modification  ne s\'est pas bien déroulée.', 'failure');
+                row.innerHTML = '';
+                updateRow(row, oldInst);
             }
-            throw Error
         }).catch(e => {
-            console.log('Erreur: ', e);
+            console.log(e);
         });
     }
 
-    function annulerModification(event) {
+    function cancelModification(event) {
         const row = event.target.parentElement.parentElement;
         const inst = JSON.parse(row.dataset.object);
         row.innerHTML = '';
         updateRow(row, inst);
     }
 
-    function createSelectOuiNon(value) {
-        const td = document.createElement('td');
-        td.innerHTML = `<select class="form-control" >
-                          <option value="null" ${value === null ? "selected" : ""}  >Sans objet</option>
-                          <option value="true" ${value === true ? "selected" : ""} >Oui</option>
-                          <option value="false" ${value === false ? "selected" : ""} >Non</option>
-                        </select>`;
-        return td;
+        function deleteInstallation(event) {
+        const row = event.target.parentElement.parentElement;
+        const inst = JSON.parse(row.dataset.object);
+
+        fetch(`/api/${inst.type}/${inst.id}`, {
+            method: 'DELETE'
+        }).then(res => {
+            if (res.status === 200) {
+                displayFlashAlert('La suppression s\'est bien déroulée.', 'success');
+                row.remove();
+            } else {
+                displayFlashAlert('La suppression  ne s\'est pas bien déroulée.', 'failure');
+            }
+        }).catch(e => {
+            console.log(e);
+        });
+    }
+
+    function displayFlashAlert(msg, type) {
+        if (type === 'success') {
+            flash = createSuccessAlert(msg);
+        } else {
+            flash = createFailureAlert(msg);
+        }
+        flashAlert.append(flash);
+        setTimeout(() => flashAlert.removeChild(flashAlert.firstElementChild), 2000);
+    }
+
+    function createFailureAlert(msg) {
+        const alert = document.createElement('div');
+        alert.className = 'alert alert-danger alert-dismissible d-flex align-items-center fade show';
+        alert.innerHTML = `<i class="bi-exclamation-octagon-fill"></i>
+                           <strong class="mx-2">Erreur! </strong> ${msg}
+                           <button type="button" class="btn-close" data-bs-dismiss="alert"></button>`;
+        return alert;
+    }
+
+    function createSuccessAlert(msg) {
+        const alert = document.createElement('div');
+        alert.className = 'alert alert-success alert-dismissible d-flex align-items-center fade show';
+        alert.innerHTML = `<i class="bi-check-circle-fill"></i>
+                           <strong class="mx-2">Succès! </strong> ${msg}
+                           <button type="button" class="btn-close" data-bs-dismiss="alert"></button>`;
+        return alert;
     }
 
 
@@ -281,7 +341,7 @@ window.addEventListener("load", function () {
         formControl.className = 'form-control is-invalid'
     }
 
-    function chargerListeInstallations() {
+    function loadListInstallations() {
         fetch('/api/liste-installations').then(res => {
             if (res.status === 200) {
                 return res.json();
@@ -292,13 +352,12 @@ window.addEventListener("load", function () {
                 const option = document.createElement('option');
                 option.setAttribute('value', inst);
                 option.innerText = inst;
-                rechercheSelect.append(option);
+                searchInstallation.append(option);
             });
         }).catch(e => {
             console.log('Erreur: ', e);
         })
     }
 
-    chargerListeInstallations();
+    loadListInstallations();
 });
-

@@ -46,3 +46,13 @@ body {
 table {
     background-color: #fff;
 }
+
+#flash-alert {
+    position: fixed;
+    top: 2em;
+    left: 0;
+    right: 0;
+    margin: auto;
+    width: 80%;
+    z-index: 30;
+}

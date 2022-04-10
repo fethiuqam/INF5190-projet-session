@@ -30,7 +30,7 @@ class PatinoireSchema(ma.Schema):
                   'arrose', 'resurface', 'mise_a_jour')
 
 
-patinoire_schema = GlissadeSchema()
+patinoire_schema = PatinoireSchema()
 
 
 class PiscineSchema(ma.Schema):
@@ -43,7 +43,6 @@ class PiscineSchema(ma.Schema):
 piscine_schema = PiscineSchema()
 
 # json-schema
-
 
 glissade_update_schema = {
     'type': 'object',
@@ -104,7 +103,8 @@ patinoire_update_schema = {
 
 piscine_update_schema = {
     'type': 'object',
-    'required': ['nom', 'arrondissement', 'id_uev', 'type_piscine', 'adresse',
+    'required': ['nom', 'arrondissement', 'id_uev', 'type_piscine',
+                 'adresse',
                  'propriete', 'gestion', 'equipement', 'point_x', 'point_y',
                  'longitude', 'latitude'],
     'properties': {
