@@ -50,10 +50,12 @@ glissade_update_schema = {
                  'condition', 'mise_a_jour'],
     'properties': {
         'nom': {
-            'type': 'string'
+            'type': 'string',
+            'minLength': 2
         },
         'arrondissement': {
-            'type': 'string'
+            'type': 'string',
+            'minLength': 2
         },
         'ouvert': {
             'type': ['boolean', 'null']
@@ -77,10 +79,12 @@ patinoire_update_schema = {
                  'arrose', 'resurface', 'mise_a_jour'],
     'properties': {
         'nom': {
-            'type': 'string'
+            'type': 'string',
+            'minLength': 2
         },
         'arrondissement': {
-            'type': 'string'
+            'type': 'string',
+            'minLength': 2
         },
         'ouvert': {
             'type': ['boolean', 'null']
@@ -95,7 +99,7 @@ patinoire_update_schema = {
             'type': ['boolean', 'null']
         },
         'mise_a_jour': {
-            'type': 'string',
+            'type': 'string'
         }
     },
     'additionalProperties': False
@@ -109,16 +113,19 @@ piscine_update_schema = {
                  'longitude', 'latitude'],
     'properties': {
         'nom': {
-            'type': 'string'
+            'type': 'string',
+            'minLength': 2
         },
         'arrondissement': {
-            'type': 'string'
+            'type': 'string',
+            'minLength': 2
         },
         'id_uev': {
             'type': ['number', 'null']
         },
         'type_piscine': {
-            'type': 'string'
+            'type': 'string',
+            'minLength': 2
         },
         'adresse': {
             'type': ['string', 'null']

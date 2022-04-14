@@ -4,7 +4,6 @@ from flask import render_template
 from flask import jsonify
 from flask_json_schema import JsonSchema
 from flask_json_schema import JsonValidationError
-
 from models import *
 from planification import demarrer_planification
 from import_donnees import importer_donnees
@@ -118,6 +117,5 @@ def delete_piscine(id):
 
 
 with app.app_context():
-    db.create_all()
     importer_donnees()
     demarrer_planification()

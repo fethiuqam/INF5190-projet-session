@@ -11,5 +11,3 @@ scheduler.add_job(func=importer_donnees, trigger='cron', hour='00',
 def demarrer_planification():
     scheduler.start()
 
-# scheduler.add_job(func=job, trigger='cron', second='00')
-
