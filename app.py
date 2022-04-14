@@ -123,6 +123,7 @@ def delete_piscine(id):
 
 
 with app.app_context():
+    db.drop_all()
     db.create_all()
     import_data()
     start_planification()
