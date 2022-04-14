@@ -242,23 +242,6 @@ types:
                   }
                 ]
 
-  /liste-installations:
-    get:
-      description: Liste ordonnée de toutes les nom d'installations.
-      responses:
-        200:
-          body:
-            application/json:
-              type: string[]
-              example:
-                [
-                  "Centre Rosemont",
-                  "Centre aquatique Rivières-des-Prairies",
-                  "Centre communautaire Notre-Dame-de-Grâce",
-                  "Centre du Plateau",
-                  "Centre sportif Côte-des-Neiges"
-                ]
-
   /glissade:
     /{id}:
       put:

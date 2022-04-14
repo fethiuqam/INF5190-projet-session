@@ -331,31 +331,10 @@ window.addEventListener("load", function () {
         return alert;
     }
 
-
     function setError(formControl, errorMessage) {
         const errorSpan = formControl.parentElement.querySelector('.error');
         errorSpan.style.visibility = 'visible'
         errorSpan.innerHTML = errorMessage
         formControl.className = 'form-control is-invalid'
     }
-
-    function loadListInstallations() {
-        fetch('/api/liste-installations').then(res => {
-            if (res.status === 200) {
-                return res.json();
-            }
-            throw Error
-        }).then(installations => {
-            installations.forEach(inst => {
-                const option = document.createElement('option');
-                option.setAttribute('value', inst);
-                option.innerText = inst;
-                searchInstallation.append(option);
-            });
-        }).catch(e => {
-            displayFlashAlert('Une erreur est survenue lors du chargement de la liste des installations.', 'failure');
-        })
-    }
-
-    loadListInstallations();
 });

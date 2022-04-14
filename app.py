@@ -31,7 +31,10 @@ def validation_error(e):
 
 @app.route('/')
 def index():
-    return render_template('index.html')
+    installations = db.session.query(Installation).order_by(
+        Installation.nom).all()
+    data = list(dict.fromkeys([inst.nom for inst in installations]))
+    return render_template('index.html', installations=data)
 
 
 @app.route('/doc')
@@ -54,14 +57,6 @@ def installations():
         installations = Installation.query.order_by(
             Installation.nom).all()
     data = installations_schema.dump(installations)
-    return jsonify(data)
-
-
-@app.route('/api/liste-installations/')
-def liste_installations():
-    installations = db.session.query(Installation).order_by(
-        Installation.nom).all()
-    data = list(dict.fromkeys([inst.nom for inst in installations]))
     return jsonify(data)
 
 
