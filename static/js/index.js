@@ -24,7 +24,7 @@ window.addEventListener("load", function () {
             }).then(installations => {
                 displayResults(installations);
             }).catch(e => {
-                console.log('Erreur: ', e);
+                displayFlashAlert('Une erreur est survenue lors du chargement des résultats de la recherche.', 'failure');
             })
         }
     }
@@ -40,7 +40,7 @@ window.addEventListener("load", function () {
             }).then(installations => {
                 displayResults(installations);
             }).catch(e => {
-                console.log('Erreur: ', e);
+                displayFlashAlert('Une erreur est survenue lors du chargement des résultats de la recherche.', 'failure');
             })
         }
     }
@@ -159,8 +159,8 @@ window.addEventListener("load", function () {
         row.append(actions);
     }
 
-    function displayBooleanNull(value){
-        if(value === null)
+    function displayBooleanNull(value) {
+        if (value === null)
             return 'Néant';
         else if (value === true)
             return 'Oui';
@@ -168,7 +168,7 @@ window.addEventListener("load", function () {
             return 'Non';
     }
 
-    function displayDate(value){
+    function displayDate(value) {
         return new Date(value).toLocaleString('fr-CA');
     }
 
@@ -183,8 +183,8 @@ window.addEventListener("load", function () {
     function modifyInstallation(event) {
         const row = event.target.parentElement.parentElement;
         const inst = JSON.parse(row.dataset.object);
-        row.innerHTML = `<th><input type="text" class="form-control" value="${inst.nom}"></th>
-                        <td><input type="text" class="form-control" value="${inst.arrondissement}"></td>`;
+        row.innerHTML = `<th>${inst.nom}</th>
+                        <td>${inst.arrondissement}</td>`;
         if (inst.type === 'glissade') {
             row.append(createSelectBooleanNull(inst.ouvert));
             row.append(createSelectBooleanNull(inst.deblaye));
@@ -230,8 +230,6 @@ window.addEventListener("load", function () {
         const inst = JSON.parse(row.dataset.object);
         const oldInst = Object.assign({}, inst);
         cells = row.children;
-        inst.nom = cells[0].firstChild.value;
-        inst.arrondissement = cells[1].firstChild.value;
         if (inst.type === 'glissade') {
             inst.ouvert = JSON.parse(cells[2].firstChild.value);
             inst.deblaye = JSON.parse(cells[3].firstChild.value);
@@ -271,12 +269,12 @@ window.addEventListener("load", function () {
                 row.innerHTML = '';
                 updateRow(row, inst);
             } else {
-                displayFlashAlert('La modification  ne s\'est pas bien déroulée.', 'failure');
-                row.innerHTML = '';
-                updateRow(row, oldInst);
+                throw Error();
             }
         }).catch(e => {
-            console.log(e);
+            displayFlashAlert('Une erreur est survenue lors de la modification de l\'installation .', 'failure');
+            row.innerHTML = '';
+            updateRow(row, oldInst);
         });
     }
 
@@ -287,7 +285,7 @@ window.addEventListener("load", function () {
         updateRow(row, inst);
     }
 
-        function deleteInstallation(event) {
+    function deleteInstallation(event) {
         const row = event.target.parentElement.parentElement;
         const inst = JSON.parse(row.dataset.object);
 
@@ -295,13 +293,13 @@ window.addEventListener("load", function () {
             method: 'DELETE'
         }).then(res => {
             if (res.status === 200) {
-                displayFlashAlert('La suppression s\'est bien déroulée.', 'success');
+                displayFlashAlert('La suppression de l\'installation s\'est bien déroulée.', 'success');
                 row.remove();
             } else {
-                displayFlashAlert('La suppression  ne s\'est pas bien déroulée.', 'failure');
+                throw Error();
             }
         }).catch(e => {
-            console.log(e);
+            displayFlashAlert('Une erreur est survenue lors de la suppression de l\'installation .', 'failure');
         });
     }
 
@@ -312,14 +310,14 @@ window.addEventListener("load", function () {
             flash = createFailureAlert(msg);
         }
         flashAlert.append(flash);
-        setTimeout(() => flashAlert.removeChild(flashAlert.firstElementChild), 2000);
+        setTimeout(() => flashAlert.removeChild(flashAlert.firstElementChild), 5000);
     }
 
     function createFailureAlert(msg) {
         const alert = document.createElement('div');
         alert.className = 'alert alert-danger alert-dismissible d-flex align-items-center fade show';
         alert.innerHTML = `<i class="bi-exclamation-octagon-fill"></i>
-                           <strong class="mx-2">Erreur! </strong> ${msg}
+                           <strong class="mx-2">Erreur !  </strong> ${msg}
                            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>`;
         return alert;
     }
@@ -355,7 +353,7 @@ window.addEventListener("load", function () {
                 searchInstallation.append(option);
             });
         }).catch(e => {
-            console.log('Erreur: ', e);
+            displayFlashAlert('Une erreur est survenue lors du chargement de la liste des installations.', 'failure');
         })
     }
 

@@ -5,13 +5,19 @@ from flask import jsonify
 from flask_json_schema import JsonSchema
 from flask_json_schema import JsonValidationError
 from models import *
-from planification import demarrer_planification
-from import_donnees import importer_donnees
+from planification import start_planification
+from import_data import import_data
 from schemas import *
 
 app = Flask(__name__)
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///db/sqlite.db'
-app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+# configuration de l'application selon l'environnement
+if app.config["ENV"] == "heroku":
+    app.config.from_object("config.HerokuConfig")
+elif app.config["ENV"] == "development":
+    app.config.from_object("config.DevConfig")
+else:
+    app.config.from_object("config.TestConfig")
+# initialisations
 db.init_app(app)
 ma.init_app(app)
 schema = JsonSchema(app)
@@ -117,5 +123,6 @@ def delete_piscine(id):
 
 
 with app.app_context():
-    importer_donnees()
-    demarrer_planification()
+    db.create_all()
+    import_data()
+    start_planification()

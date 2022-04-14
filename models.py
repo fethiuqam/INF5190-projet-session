@@ -47,18 +47,8 @@ class Glissade(Installation):
         self.condition = condition
         self.mise_a_jour = string_to_datetime(mise_a_jour)
 
-    def __eq__(self, other):
-        if isinstance(other, self.__class__):
-            return self.nom == other.nom and \
-                   self.arrondissement == other.arrondissement and \
-                   self.ouvert == other.ouvert and \
-                   self.deblaye == other.deblaye and \
-                   self.condition == other.condition and \
-                   self.mise_a_jour == other.mise_a_jour
-        else:
-            return False
-
     def update(self, other):
+        self.nom = other.nom
         self.arrondissement = other.arrondissement
         self.ouvert = other.ouvert
         self.deblaye = other.deblaye
@@ -97,19 +87,8 @@ class Patinoire(Installation):
         self.resurface = resurface
         self.mise_a_jour = string_to_datetime(mise_a_jour)
 
-    def __eq__(self, other):
-        if isinstance(other, self.__class__):
-            return self.nom == other.nom and \
-                   self.arrondissement == other.arrondissement and \
-                   self.ouvert == other.ouvert and \
-                   self.deblaye == other.deblaye and \
-                   self.arrose == other.arrose and \
-                   self.resurface == other.resurface and \
-                   self.mise_a_jour == other.mise_a_jour
-        else:
-            return False
-
     def update(self, other):
+        self.nom = other.nom
         self.arrondissement = other.arrondissement
         self.ouvert = other.ouvert
         self.deblaye = other.deblaye
@@ -150,25 +129,10 @@ class Piscine(Installation):
         self.longitude = longitude
         self.latitude = latitude
 
-    def __eq__(self, other):
-        if isinstance(other, self.__class__):
-            return self.nom == other.nom and \
-                   self.arrondissement == other.arrondissement and \
-                   self.id_uev == other.id_uev and \
-                   self.type_piscine == other.type_piscine and \
-                   self.adresse == other.adresse and \
-                   self.propriete == other.propriete and \
-                   self.gestion == other.gestion and \
-                   self.equipement == other.equipement and \
-                   self.point_x == other.point_x and \
-                   self.point_y == other.point_y and \
-                   self.longitude == other.longitude and \
-                   self.latitude == other.latitude
-        else:
-            return False
-
     def update(self, other):
+        self.nom = other.nom
         self.arrondissement = other.arrondissement
+        self.type_piscine = other.type_piscine
         self.id_uev = other.id_uev
         self.adresse = other.adresse
         self.propriete = other.propriete
