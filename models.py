@@ -8,8 +8,8 @@ db = SQLAlchemy()
 class Installation(db.Model):
     __tablename__ = 'installation'
     id = db.Column(db.Integer, primary_key=True)
-    nom = db.Column(db.String(40), nullable=False)
-    arrondissement = db.Column(db.String(40), nullable=False)
+    nom = db.Column(db.String(100), nullable=False)
+    arrondissement = db.Column(db.String(100), nullable=False)
     type = db.Column(db.String(30))
 
     __mapper_args__ = {
@@ -19,7 +19,7 @@ class Installation(db.Model):
 
 
 class Glissade(Installation):
-    condition = db.Column(db.String(40))
+    condition = db.Column(db.String(100))
 
     __mapper_args__ = {
         'polymorphic_identity': 'glissade'
@@ -99,13 +99,13 @@ class Patinoire(Installation):
 
 class Piscine(Installation):
     id_uev = db.Column(db.Integer)
-    type_piscine = db.Column(db.String(30))
-    adresse = db.Column(db.String(60))
-    propriete = db.Column(db.String(20))
-    gestion = db.Column(db.String(20))
-    equipement = db.Column(db.String(20))
-    point_x = db.Column(db.String(20))
-    point_y = db.Column(db.String(20))
+    type_piscine = db.Column(db.String(100))
+    adresse = db.Column(db.String(100))
+    propriete = db.Column(db.String(100))
+    gestion = db.Column(db.String(100))
+    equipement = db.Column(db.String(100))
+    point_x = db.Column(db.String(30))
+    point_y = db.Column(db.String(30))
     longitude = db.Column(db.Float)
     latitude = db.Column(db.Float)
 
