@@ -10,4 +10,3 @@ scheduler.add_job(func=import_data, trigger='cron', hour='00',
 
 def start_planification():
     scheduler.start()
-
