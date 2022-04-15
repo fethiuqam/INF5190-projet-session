@@ -119,5 +119,5 @@ def delete_piscine(id):
 
 with app.app_context():
     db.create_all()
-    import_data()
+    #import_data()
     start_planification()

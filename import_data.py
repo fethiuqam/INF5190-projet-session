@@ -17,7 +17,7 @@ url_glissade = 'http://www2.ville.montreal.qc.ca/services_citoyens/' \
 def import_data():
     import_piscines()
     import_glissades()
-    import_patinoires()
+    #import_patinoires()
     print('Fin de l import des données')
 
 

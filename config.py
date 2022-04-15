@@ -19,4 +19,4 @@ class DevConfig(Config):
 
 
 class TestConfig(Config):
-    SQLALCHEMY_DATABASE_URI = 'sqlite:///db/sqlite.db'
+    SQLALCHEMY_DATABASE_URI = 'postgresql://postgres:pass@127.0.0.1/montreal'
