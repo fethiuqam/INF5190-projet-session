@@ -7,10 +7,10 @@ class Config:
 
 
 class HerokuConfig(Config):
-    SQLALCHEMY_DATABASE_URI = 'postgresql://lttrqunjwirccz:84a044558cb0d36c' \
-                              'ff8188a8b08694d8fd720c4541b98043820ca89a60b' \
-                              'b9443@ec2-54-80-123-146.compute-1.' \
-                              'amazonaws.com:5432/d6l61vp1vehd4k'
+    SQLALCHEMY_DATABASE_URI = 'postgresql://dvnztlzkcugedp:633bd0a2c7778' \
+                              '4971d06e43a30da25c1292de2056b6de5bd9fe292' \
+                              '92cf091029@ec2-52-203-118-49.compute-1' \
+                              '.amazonaws.com:5432/ddp8i0qsnelnf5'
 
 
 class DevConfig(Config):
