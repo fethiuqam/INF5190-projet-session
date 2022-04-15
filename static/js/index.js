@@ -73,10 +73,10 @@ window.addEventListener("load", function () {
     function createTable(installations, header) {
         const divResponsive = document.createElement('div');
         divResponsive.className = 'table-responsive';
-        const table = document.createElement("table");
-        table.className = "table table-hover";
+        const table = document.createElement('table');
+        table.className = 'table table-hover';
         divResponsive.append(table);
-        const thead = document.createElement("thead");
+        const thead = document.createElement('thead');
         thead.innerHTML = header;
         table.append(thead);
         const tbody = document.createElement('tbody');
@@ -107,7 +107,7 @@ window.addEventListener("load", function () {
 
     const headerPiscine = `<tr><th scope="col">Nom</th>
                        <th scope="col">Arrondissement</th>                           
-                       <th scope="col">Id UEV</th>'
+                       <th scope="col">Id UEV</th>
                        <th scope="col">Type de piscine</th>
                        <th scope="col">Adresse</th>
                        <th scope="col">Propriété</th>
@@ -118,7 +118,6 @@ window.addEventListener("load", function () {
                        <th scope="col">Longitude</th>
                        <th scope="col">Latitude</th>
                        <th scope="col">Actions</th></tr>`;
-
 
     function createRow(inst) {
         let row = document.createElement('tr');
