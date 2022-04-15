@@ -2,6 +2,7 @@ import pandas as pd
 import requests
 import xml.etree.ElementTree as ET
 from models import *
+import time
 
 url_piscine = 'https://data.montreal.ca/dataset/4604afb7-a7c4-4626-' \
               'a3ca-e136158133f2/resource/cbdca706-569e-4b4a-805d-' \
@@ -70,6 +71,7 @@ def import_patinoires():
         if patinoire is None:
             db.session.add(new_patinoire)
             db.session.commit()
+        time.sleep(0.5)
 
 
 def string_to_boolean(chaine):
